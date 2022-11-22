@@ -80,13 +80,9 @@ void firstTest(){
   for(int i=0;i<5;i++){
   init_right_reading=sensor.readRangeContinuousMillimeters();
   }
-  Serial.print("initial reading: ");
-  Serial.print(init_right_reading);
-  Serial.print('\n');
 
   // get current reading on right tof sensor
   curr_right=init_right_reading;
-  Serial.println(curr_right);
 
   digitalWrite(dirPin, HIGH); // changed this for testing driving straight; original, HIGH both
   digitalWrite(dirPin2, LOW);
@@ -96,7 +92,6 @@ void firstTest(){
 
   while (abs(init_right_reading - curr_right) < 5 ){
     curr_right=sensor.readRangeContinuousMillimeters();
-    Serial.print(curr_right);
     for(int i=0;i<50;i++){
     digitalWrite(stepPin, HIGH);
     digitalWrite(stepPin2, HIGH);
@@ -107,6 +102,12 @@ void firstTest(){
     }
   }
   //Shine an LED now
+  double curr_time = millis();
+  delay(400);
+  double end_time = millis();
+
+  Serial.println("The time it takes to detect error:");
+  Serial.print(end_time - curr_time);
 
   digitalWrite(LEDpin, HIGH);
 
@@ -122,8 +123,8 @@ void thirdTest(){
 
   double tileDistToWall = 300;
 
-  digitalWrite(dirPin, HIGH); // changed this for testing driving straight; original, HIGH both
-  digitalWrite(dirPin2, LOW);
+  digitalWrite(dirPin, LOW); // changed this for testing driving straight; original, HIGH both
+  digitalWrite(dirPin2, HIGH);
   digitalWrite(resetPin,HIGH);
 
   while ( distance > tileDistToWall + 15 ){
@@ -145,9 +146,11 @@ void thirdTest(){
 }
 
 void loop(){
-  //firstTest();
-  //delay(100000);
-  // thirdTest()
+  // firstTest();
+  // delay(100000);
+  thirdTest();
+  delay(100000);
+
 }
 
 
