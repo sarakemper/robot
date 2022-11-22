@@ -66,6 +66,7 @@ void setup() {
   pinMode(dirPin, OUTPUT);
   pinMode(stepPin2, OUTPUT);
   pinMode(dirPin2, OUTPUT);
+  pinMode(9,OUTPUT);
 
   //set up LED
   pinMode(LEDpin, OUTPUT);
@@ -84,13 +85,14 @@ void firstTest(){
   // get current reading on right tof sensor
   curr_right=init_right_reading;
 
-  digitalWrite(dirPin, HIGH); // changed this for testing driving straight; original, HIGH both
-  digitalWrite(dirPin2, LOW);
+  digitalWrite(dirPin, LOW); // changed this for testing driving straight; original, HIGH both
+  digitalWrite(dirPin2, HIGH);
   digitalWrite(resetPin,HIGH); 
-
+  digitalWrite(9,HIGH);
   // keep moving until distance from right is != inital reading +-2 cm
 
-  while (abs(init_right_reading - curr_right) < 5 ){
+  while (abs(init_right_reading - curr_right) < 10 ){
+    
     curr_right=sensor.readRangeContinuousMillimeters();
     for(int i=0;i<50;i++){
     digitalWrite(stepPin, HIGH);
@@ -121,14 +123,15 @@ void thirdTest(){
   Serial.print(distance);
   Serial.print('\n');
 
-  double tileDistToWall = 300;
+  double tileDistToWall = 80;
 
   digitalWrite(dirPin, LOW); // changed this for testing driving straight; original, HIGH both
   digitalWrite(dirPin2, HIGH);
   digitalWrite(resetPin,HIGH);
 
-  while ( distance > tileDistToWall + 15 ){
+  while ( distance > tileDistToWall + 5 ){
     // Serial.println(distance);
+digitalWrite(9,HIGH);    
     distance=sensor2.readRangeContinuousMillimeters(1);
     for(int i=0;i<50;i++){
     digitalWrite(stepPin, HIGH);
@@ -146,10 +149,10 @@ void thirdTest(){
 }
 
 void loop(){
-  // firstTest();
-  // delay(100000);
-  thirdTest();
+  firstTest();
   delay(100000);
+  // thirdTest();
+  // delay(100000);
 
 }
 
