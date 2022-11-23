@@ -22,7 +22,7 @@ VL53L1X sensor;
 VL53L1X sensor2;
 
 
-const int resetPin=8;
+// int resetPin=8;
 int num_turns = 4;
 unsigned long previousMillis = 0UL;
 unsigned long interval = 1000UL;
@@ -62,7 +62,6 @@ void getAcc() {
 }
 
 void setupGryo() {
-  Serial.begin(9600);
   int Gyro_cal_x_sample = 0;
   int Gyro_cal_y_sample = 0;
   int Gyro_cal_z_sample = 0;
@@ -122,7 +121,7 @@ void setup() {
   digitalWrite(resetPin,HIGH);
   digitalWrite(sleepPin,HIGH);
 
-  setupGryo()
+  setupGryo();
 
   // set up time of flight sensors
   pinMode(2, OUTPUT);
@@ -149,7 +148,7 @@ void setup() {
   gVL531X.setTimeout(1000);
 }
 
-void goStraight(path) {
+void goStraight(int path) {
   double fwdDistance;
   double tileDistToWall = 0;
   fwdDistance=sensor2.readRangeContinuousMillimeters();
@@ -161,9 +160,10 @@ void goStraight(path) {
   if (path == 1 || path == 2 || path == 3)
     tileDistToWall = 100;
   else if (path == 4 || path == 5 || path == 6 || path == 7)
-    tileDistToWall = 400
-  else
-    tileDistToWall = 700
+    tileDistToWall = 400;
+  else{
+    tileDistToWall = 700;
+  }
 
   digitalWrite(dirPin, LOW); // changed this for testing driving straight; original, HIGH both
   digitalWrite(dirPin2, HIGH);
@@ -173,13 +173,14 @@ void goStraight(path) {
     // Serial.println(fwdDistance);
     digitalWrite(resetPin,HIGH);
     fwdDistance=sensor2.readRangeContinuousMillimeters(1);
-    for(int i=0;i<50;i++){
-    digitalWrite(stepPin, HIGH);
-    digitalWrite(stepPin2, HIGH);
-    delayMicroseconds(2000);
-    digitalWrite(stepPin, LOW);
-    digitalWrite(stepPin2, LOW);
-    delayMicroseconds(2000);
+    for(int i=0;i<50;i++) {
+      digitalWrite(stepPin, HIGH);
+      digitalWrite(stepPin2, HIGH);
+      delayMicroseconds(2000);
+      digitalWrite(stepPin, LOW);
+      digitalWrite(stepPin2, LOW);
+      delayMicroseconds(2000);
+      // TODO: add error correction / detection here
     }
   }
 
@@ -250,24 +251,24 @@ void turn() {
   Serial.print(y);
   Serial.print("\n");
   //90 degrees=1200
-  if(y>-1090){
-    n=1;
-  } else {
-    n=0;
-  }
-  // digitalWrite(dirPin, HIGH);
-  // digitalWrite(dirPin2, HIGH);
-    digitalWrite(dirPin,LOW);
-    digitalWrite(dirPin2, LOW);
-    digitalWrite(sleepPin,HIGH);
-  // Spin the stepper motor 1 revolution slowly:
-    // These four lines result in 1 step:
-    digitalWrite(stepPin, HIGH);
-    digitalWrite(stepPin2, HIGH);
-    delayMicroseconds(700);
-    digitalWrite(stepPin, LOW);
-    digitalWrite(stepPin2, LOW);
-    delayMicroseconds(700);
+  // if(y>-1090){
+  //   n=1;
+  // } else {
+  //   n=0;
+  // }
+  // // digitalWrite(dirPin, HIGH);
+  // // digitalWrite(dirPin2, HIGH);
+  //   digitalWrite(dirPin,LOW);
+  //   digitalWrite(dirPin2, LOW);
+  //   digitalWrite(sleepPin,HIGH);
+  // // Spin the stepper motor 1 revolution slowly:
+  //   // These four lines result in 1 step:
+  //   digitalWrite(stepPin, HIGH);
+  //   digitalWrite(stepPin2, HIGH);
+  //   delayMicroseconds(700);
+  //   digitalWrite(stepPin, LOW);
+  //   digitalWrite(stepPin2, LOW);
+  //   delayMicroseconds(700);
   }
 
   // TODO: might need to delete/change this after robot turns
@@ -278,15 +279,31 @@ void turn() {
 }
 
 void loop(){
+  turn();
+
   int path = 1;
 
-  while (turn <= 11) {
-    goStraight(turn)
+  while (path <= 11) {
+    goStraight(path);
     turn();
 
     // TODO: reset gyro sensors to recalibrate new angle
 
-    turn = turn + 1;
+    path = path + 1;
   }
   
 }
+
+  /* TURN ANGLES 
+    turn 2 angle = -1975 
+    turn 3 = -2850
+    turn 4 = -3740
+    turn 5 = -4610
+    turn 6 = -5490
+    turn 7 = -6374
+    turn 8 = -7264
+    turn 9 = -8160
+    turn 10 = -
+    turn 11 = 
+    turn 12 =  
+  */
