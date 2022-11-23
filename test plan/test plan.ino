@@ -79,7 +79,7 @@ void firstTest(){
   
   // Get initial reading
   for(int i=0;i<5;i++){
-  init_right_reading=sensor.readRangeContinuousMillimeters();
+    init_right_reading=sensor.readRangeContinuousMillimeters();
   }
 
   // get current reading on right tof sensor
