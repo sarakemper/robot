@@ -158,7 +158,7 @@ void goStraight(int path) {
   Serial.print('\n');
   
   if (path == 1 || path == 2 || path == 3)
-    tileDistToWall = 200;
+    tileDistToWall = 180;
   else if (path == 4 || path == 5 || path == 6 || path == 7)
     tileDistToWall = 400;
   else{
@@ -274,78 +274,106 @@ void goStraight(int path) {
 void turn(int path)
 {
   int dist1, dist2,sumDist1=0,sumDist2=0;
-  for(int i=0;i<SIZE;i++){
+  for (int i=0;i<SIZE;i++) {
     sumDist1=sumDist1+sensor.readRangeContinuousMillimeters();
     sumDist2=sumDist2+sensor2.readRangeContinuousMillimeters();
   }
-  dist1=sumDist1/SIZE;
-  dist2=sumDist2/SIZE;
-  int n=1;
-  while(n){
-  getAcc();
-  getGyro();
-  //Acceleration Calibration
-  if((aX<0&&Accel_cal_x<0)||(aX>0&&Accel_cal_x>0))
-    aX=aX-Accel_cal_x;
-  else
-    aX=aX+Accel_cal_x;
-  if((aY<0&&Accel_cal_y<0)||(aY>0&&Accel_cal_y>0))
-    aY=aY-Accel_cal_y;
-  else
-    aY=aY+Accel_cal_y;
-  if((aZ<0&&Accel_cal_z<0)||(aZ>0&&Accel_cal_z>0))
-    aZ=aZ-Accel_cal_z;
-  else
-    aZ=aZ+Accel_cal_z;
-  //Gyroscope Calibration
-  if((gX<0&&Gyro_cal_x<0)||(gX>0&&Gyro_cal_x>0))
-    gX=gX-Gyro_cal_x;
-  else
-    gX=gX+Gyro_cal_x;
-  if((gY<0&&Gyro_cal_y<0)||(gY>0&&Gyro_cal_y>0))
-    gY=gY-Gyro_cal_y;
-  else
-    gY=gY+Gyro_cal_y;
-  if((gZ<0&&Gyro_cal_z<0)||(gZ>0&&Gyro_cal_z>0))
-    gZ=gZ-Gyro_cal_z;
-  else
-    gZ=gZ+Gyro_cal_z;
-  if(gZ>1.0||gZ<-1.0)
-  gyaw=gyaw+(gZ/50);
-  //Accelerometer
-  roll=asin((((aX))/9.8));
-  pitch=asin((((aY))/9.8));
-  float ro=roll;
-  float pi=pitch;
-  //mapping
-  roll=roll*90.0/1.5;
-  pitch=pitch*90.0/1.5;
-  yaw=gyaw*(90/30);
-  int y=yaw;
-  int p=pitch;
-  int r=roll;
-  y= (y * alpha) + (yawp* (1.0 - alpha));
-  r = (r * alpha) + (rollp * (1.0 - alpha));
-  p = (p * alpha) + (pitchp * (1.0 - alpha));
-  gXp=gX,gYp=gY,gZp=gZ,aXp=aX,aYp=aY,aZp=aZ;
-  yawp=y;
-  rollp=r;
-  pitchp=p;
-  //delay(50);
-  Serial.print(y);
-  Serial.print("\n");
-  //90 degrees=1200
-  if(y>-1090){
-    n=1;
-  }
-  else{
-    n=0;
-  }
+  dist1 = sumDist1/SIZE;
+  dist2 = sumDist2/SIZE;
+  int n = 1;
+  while (n) {
+    getAcc();
+    getGyro();
+    //Acceleration Calibration
+    if((aX<0&&Accel_cal_x<0)||(aX>0&&Accel_cal_x>0))
+      aX=aX-Accel_cal_x;
+    else
+      aX=aX+Accel_cal_x;
+    if((aY<0&&Accel_cal_y<0)||(aY>0&&Accel_cal_y>0))
+      aY=aY-Accel_cal_y;
+    else
+      aY=aY+Accel_cal_y;
+    if((aZ<0&&Accel_cal_z<0)||(aZ>0&&Accel_cal_z>0))
+      aZ=aZ-Accel_cal_z;
+    else
+      aZ=aZ+Accel_cal_z;
+    //Gyroscope Calibration
+    if((gX<0&&Gyro_cal_x<0)||(gX>0&&Gyro_cal_x>0))
+      gX=gX-Gyro_cal_x;
+    else
+      gX=gX+Gyro_cal_x;
+    if((gY<0&&Gyro_cal_y<0)||(gY>0&&Gyro_cal_y>0))
+      gY=gY-Gyro_cal_y;
+    else
+      gY=gY+Gyro_cal_y;
+    if((gZ<0&&Gyro_cal_z<0)||(gZ>0&&Gyro_cal_z>0))
+      gZ=gZ-Gyro_cal_z;
+    else
+      gZ=gZ+Gyro_cal_z;
+    if(gZ>1.0||gZ<-1.0)
+    gyaw=gyaw+(gZ/50);
+    //Accelerometer
+    roll=asin((((aX))/9.8));
+    pitch=asin((((aY))/9.8));
+    float ro=roll;
+    float pi=pitch;
+    //mapping
+    roll=roll*90.0/1.5;
+    pitch=pitch*90.0/1.5;
+    yaw=gyaw*(90/30);
+    int y=yaw;
+    int p=pitch;
+    int r=roll;
+    y= (y * alpha) + (yawp* (1.0 - alpha));
+    r = (r * alpha) + (rollp * (1.0 - alpha));
+    p = (p * alpha) + (pitchp * (1.0 - alpha));
+    gXp=gX,gYp=gY,gZp=gZ,aXp=aX,aYp=aY,aZp=aZ;
+    yawp=y;
+    rollp=r;
+    pitchp=p;
+    //delay(50);
+    Serial.print(y);
+    Serial.print("\n");
+    double angle = -1075;
+
+    if (path == 2) {
+      angle = -1880;
+    }
+    else if (path == 3) {
+      angle = -2710;
+    }
+    else if (path == 4) {
+      angle = -3540;
+    }
+    else if (path == 5) {
+      angle = -4370;
+    }
+    else if (path == 6) {
+      angle = -5200;
+    }
+    else if (path == 7) {
+      angle = -6050;
+    }
+    else if (path == 8) {
+      angle = -6870;
+    }
+    else if (path == 9) {
+      angle = -7710;
+    }
+    else if (path == 10) {
+      angle = -8550;
+    }
+
+    if(y>angle){
+      n=1;
+    } else {
+      n=0;
+    }
   // digitalWrite(dirPin, HIGH);
   // digitalWrite(dirPin2, HIGH);
     digitalWrite(dirPin,LOW);
-  digitalWrite(dirPin2, LOW);
-  digitalWrite(8,HIGH);
+    digitalWrite(dirPin2, LOW);
+    digitalWrite(8,HIGH);
   // Spin the stepper motor 1 revolution slowly:
     // These four lines result in 1 step:
     digitalWrite(stepPin, HIGH);
@@ -355,29 +383,45 @@ void turn(int path)
     digitalWrite(stepPin2, LOW);
     delayMicroseconds(700);
   }
-  while(1)
-  {
-    digitalWrite(8,0);
-    delay(5000);
-  }
 }
 
-void loop(){
+void loop() {
 
-  // turn();
+  // for (int i = 0; i+=1; i < 4) {
+  //   setupGryo();
+  //   turn(1);
+  // }
+  
 
   int path = 1;
 
   while (path <= 11) {
-    goStraight(path);
-    turn();
-
+    // goStraight(path);
+    // setupGryo();
+    if (path < 11) {
+      turn(path);
+    }
     path = path + 1;
+    delay(5000);
   }
   
 }
 
   /* TURN ANGLES 
+  1050
+  1876
+  2710
+  3536
+
+  4374
+  5205
+  6042
+  6870
+  7711
+  8533
+
+
+
     turn 2 angle = -1975 
     turn 3 = -2850
     turn 4 = -3740
