@@ -396,7 +396,7 @@ void loop() {
   int path = 1;
 
   while (path <= 11) {
-    // goStraight(path);
+    goStraight(path);
     // setupGryo();
     if (path < 11) {
       turn(path);
