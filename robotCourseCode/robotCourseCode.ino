@@ -158,7 +158,7 @@ void goStraight(int path) {
   Serial.print('\n');
   
   if (path == 1 || path == 2 || path == 3)
-    tileDistToWall = 100;
+    tileDistToWall = 200;
   else if (path == 4 || path == 5 || path == 6 || path == 7)
     tileDistToWall = 400;
   else{
@@ -169,9 +169,8 @@ void goStraight(int path) {
   digitalWrite(dirPin2, HIGH);
   // digitalWrite(resetPin,HIGH);
 
-  while ( fwdDistance > tileDistToWall ){
+  while ( fwdDistance > tileDistToWall+5 ){
     // Serial.println(fwdDistance);
-    digitalWrite(resetPin,HIGH);
     fwdDistance=sensor2.readRangeContinuousMillimeters(1);
     for(int i=0;i<50;i++) {
       digitalWrite(stepPin, HIGH);
@@ -188,9 +187,94 @@ void goStraight(int path) {
   Serial.println(fwdDistance);
 }
 
-void turn() {
-  int dist1, dist2, sumDist1 = 0, sumDist2 = 0;
-  for (int i=0;i<SIZE;i++) {
+// void turn() {
+//   int n=1;
+//   while(n){
+//     getAcc();
+//     getGyro();
+//     //Acceleration Calibration
+//     if((aX<0&&Accel_cal_x<0)||(aX>0&&Accel_cal_x>0))
+//       aX=aX-Accel_cal_x;
+//     else
+//       aX=aX+Accel_cal_x;
+//     if((aY<0&&Accel_cal_y<0)||(aY>0&&Accel_cal_y>0))
+//       aY=aY-Accel_cal_y;
+//     else
+//       aY=aY+Accel_cal_y;
+//     if((aZ<0&&Accel_cal_z<0)||(aZ>0&&Accel_cal_z>0))
+//       aZ=aZ-Accel_cal_z;
+//     else
+//       aZ=aZ+Accel_cal_z;
+//     //Gyroscope Calibration
+//     if((gX<0&&Gyro_cal_x<0)||(gX>0&&Gyro_cal_x>0))
+//       gX=gX-Gyro_cal_x;
+//     else
+//       gX=gX+Gyro_cal_x;
+//     if((gY<0&&Gyro_cal_y<0)||(gY>0&&Gyro_cal_y>0))
+//       gY=gY-Gyro_cal_y;
+//     else
+//       gY=gY+Gyro_cal_y;
+//     if((gZ<0&&Gyro_cal_z<0)||(gZ>0&&Gyro_cal_z>0))
+//       gZ=gZ-Gyro_cal_z;
+//     else
+//       gZ=gZ+Gyro_cal_z;
+//     if(gZ>1.0||gZ<-1.0)
+//     gyaw=gyaw+(gZ/50);
+//     //Accelerometer
+//     roll=asin((((aX))/9.8));
+//     pitch=asin((((aY))/9.8));
+//     float ro=roll;
+//     float pi=pitch;
+//     //mapping
+//     roll=roll*90.0/1.5;
+//     pitch=pitch*90.0/1.5;
+//     yaw=gyaw*(90/30);
+//     int y=yaw;
+//     int p=pitch;
+//     int r=roll;
+//     Serial.println(yawp);
+//     y= (y * alpha) + (yawp* (1.0 - alpha));
+//     r = (r * alpha) + (rollp * (1.0 - alpha));
+//     p = (p * alpha) + (pitchp * (1.0 - alpha));
+//     gXp=gX,gYp=gY,gZp=gZ,aXp=aX,aYp=aY,aZp=aZ;
+//     yawp=y;
+//     rollp=r;
+//     pitchp=p;
+//     //delay(50);
+//     Serial.print(y);
+//     Serial.print("\n");
+//     // 90 degrees=1200
+//     if(y>-1090){
+//       n=1;
+//     } else {
+//       n=0;
+//     }
+//     // digitalWrite(dirPin, HIGH);
+//     // digitalWrite(dirPin2, HIGH);
+//       digitalWrite(dirPin,LOW);
+//       digitalWrite(dirPin2, LOW);
+//       digitalWrite(sleepPin,HIGH);
+//     // Spin the stepper motor 1 revolution slowly:
+//       // These four lines result in 1 step:
+//       digitalWrite(stepPin, HIGH);
+//       digitalWrite(stepPin2, HIGH);
+//       delayMicroseconds(700);
+//       digitalWrite(stepPin, LOW);
+//       digitalWrite(stepPin2, LOW);
+//       delayMicroseconds(700);
+//   }
+
+//   // TODO: might need to delete/change this after robot turns
+//   while(1) {
+//     digitalWrite(sleepPin, LOW);
+//     delay(5000);
+//   }
+// }
+
+void turn(int path)
+{
+  int dist1, dist2,sumDist1=0,sumDist2=0;
+  for(int i=0;i<SIZE;i++){
     sumDist1=sumDist1+sensor.readRangeContinuousMillimeters();
     sumDist2=sumDist2+sensor2.readRangeContinuousMillimeters();
   }
@@ -251,43 +335,42 @@ void turn() {
   Serial.print(y);
   Serial.print("\n");
   //90 degrees=1200
-  // if(y>-1090){
-  //   n=1;
-  // } else {
-  //   n=0;
-  // }
-  // // digitalWrite(dirPin, HIGH);
-  // // digitalWrite(dirPin2, HIGH);
-  //   digitalWrite(dirPin,LOW);
-  //   digitalWrite(dirPin2, LOW);
-  //   digitalWrite(sleepPin,HIGH);
-  // // Spin the stepper motor 1 revolution slowly:
-  //   // These four lines result in 1 step:
-  //   digitalWrite(stepPin, HIGH);
-  //   digitalWrite(stepPin2, HIGH);
-  //   delayMicroseconds(700);
-  //   digitalWrite(stepPin, LOW);
-  //   digitalWrite(stepPin2, LOW);
-  //   delayMicroseconds(700);
+  if(y>-1090){
+    n=1;
   }
-
-  // TODO: might need to delete/change this after robot turns
-  while(1) {
-    digitalWrite(sleepPin, LOW);
+  else{
+    n=0;
+  }
+  // digitalWrite(dirPin, HIGH);
+  // digitalWrite(dirPin2, HIGH);
+    digitalWrite(dirPin,LOW);
+  digitalWrite(dirPin2, LOW);
+  digitalWrite(8,HIGH);
+  // Spin the stepper motor 1 revolution slowly:
+    // These four lines result in 1 step:
+    digitalWrite(stepPin, HIGH);
+    digitalWrite(stepPin2, HIGH);
+    delayMicroseconds(700);
+    digitalWrite(stepPin, LOW);
+    digitalWrite(stepPin2, LOW);
+    delayMicroseconds(700);
+  }
+  while(1)
+  {
+    digitalWrite(8,0);
     delay(5000);
   }
 }
 
 void loop(){
-  turn();
+
+  // turn();
 
   int path = 1;
 
   while (path <= 11) {
     goStraight(path);
     turn();
-
-    // TODO: reset gyro sensors to recalibrate new angle
 
     path = path + 1;
   }
